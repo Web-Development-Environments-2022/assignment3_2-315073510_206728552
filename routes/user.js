@@ -52,7 +52,21 @@ router.get('/favorites', async (req,res,next) => {
   }
 });
 
-
+/**
+ * This path returns last search
+ * sends string that is the last searched term
+ */
+ router.get("/getLastSearch", async (req, res, next) => {
+  let username=req.query.username
+  let browser=req.query.browser
+  try {
+    
+    
+    
+  } catch (error) {
+    next(error);
+  }
+});
 
 
 module.exports = router;
