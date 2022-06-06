@@ -20,6 +20,7 @@ router.use(async function (req, res, next) {
   }
 });
 
+router.get("/", (req, res) => res.send("woo hoo"));
 
 /**
  * This path gets body with recipeId and save this recipe in the favorites list of the logged-in user

@@ -2,30 +2,39 @@ var express = require("express");
 var router = express.Router();
 const recipes_utils = require("./utils/recipes_utils");
 
-router.get("/", (req, res) => res.send("im here"));
+router.get("/", (req, res) => res.send("yoo hoo"));
 
+router.get("/test", async(req, res) =>{
+  res.send("test")
+})
 
 /**
  * This path returns a full details of a recipe by its id
  * sends detailedRecipe
  */
-router.get("/getRecipe", async (req, res, next) => {
-  let recipeId=req.query.recipeId
-  // try {
-  //   const recipe = await recipes_utils.getRecipeDetails(req.params.id);
-  //   res.send(recipe);
-  // } catch (error) {
-  //   next(error);
-  // }
+router.get("/getRecipe", async (req, res, next) => { //id = 655705
+  //let recipeId=req.query.recipeId
+  try {
+    const recipe = await recipes_utils.getRecipeDetails(req.query.id);
+    res.send(recipe);
+  } catch (error) {
+    next(error);
+  }
 });
 /**
  * This path returns q random recipies
  * sends skinnyRecipe array
- */
- router.get("/GetRandomRecepies", (req, res) => {
-   let quantity=req.query.quantity
-
-   
+ */ 
+ router.get("/GetRandomRecepies", async (req, res, next) => {  //quantity = 5
+    //res.send("GetRandomRecepies")
+    let quantity=req.query.quantity
+    try {
+      let random_recipes = await recipes_utils.getRandomQuantityRecipes(quantity);
+      res.send(random_recipes)
+    } catch (error) {
+      next(error);
+    }
+  
  });
 
 /**
@@ -49,8 +58,8 @@ router.get("/searchRecipe", async (req, res, next) => {
 /**
  * create new recipe
  * sends status
- */
-router.put("/createRecipe", async (req, res, next) => {
+ */ 
+router.put("/createRecipe", async (req, res, next) => { 
   try {
     let detailedRecipeObj=req.params 
 
