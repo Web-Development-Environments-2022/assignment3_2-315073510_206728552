@@ -38,8 +38,8 @@ app.get("/",function(req,res)
 
 });
 
-// app.use(cors());
-// app.options("*", cors());
+app.use(cors());
+app.options("*", cors());
 
 const corsConfig = {
   origin: true,
@@ -76,7 +76,7 @@ app.use(function (req, res, next) {
 // ----> For cheking that our server is alive
 app.get("/alive", (req, res) => res.send("I'm alive"));
 
-// Routings
+// // Routings
 app.use("/users", user);
 app.use("/recipes", recipes);
 app.use(auth);

@@ -1,4 +1,5 @@
 const axios = require("axios");
+const dbUtils = require("./DButils");
 const api_domain = "https://api.spoonacular.com/recipes";
 
 
@@ -38,7 +39,22 @@ async function getRecipeDetails(recipe_id) {
 }
 
 
-//async function getRecipesPreview
+async function getRecipesFromDb(id_array){
+    let res=[]
+    
+    for (let i=0;i>id_array.length;i++){
+        let id=id_array[i]
+        console.log(id)
+        let resipe=await dbUtils.execQuery(`SELECT * FROM RECIPES WHERE id='${id}';`)
+        console.log('!!!')
+        console.log(id)
+        res.push(resipe)
+    }
+    
+    // console.log(id_array)
+    return res
+
+}
 
 async function exractPreviewRecipeDetails(recipes_info){
     //return (recipes_info.length)
@@ -72,7 +88,7 @@ async function exractPreviewRecipeDetails(recipes_info){
 }
 
 
-async function getRandomRecipes(){
+async function getRandomRecipes(quantity){
     const response = await axios.get(`${api_domain}/random`, {
         params:{
             number: 10,
@@ -91,10 +107,65 @@ async function getRandomQuantityRecipes(quantity){
     return exractPreviewRecipeDetails(new_filtered_random_recipes)
 }
 
-
+async function searchRecipe(query,numberOfResultsToDisplay,diet,cuisine,intolerances,sort){
+    const resipes = await axios.get(`${api_domain}/complexSearch`, {
+        params:{
+            query: query,
+            number:numberOfResultsToDisplay,
+            diet:diet,
+            excludeCuisine:cuisine,
+            intolerances:intolerances,
+            addRecipeInformation:true,
+            sort:sort,
+            apiKey: process.env.spooncular_apiKey
+        }
+    })
+    res=resipes.data.results.map(r=>{
+        return {
+            id:r.id,
+            title:r.title,
+            image:r.image,
+            summary:r.summary,
+            popularity:r.aggregateLikes
+        }
+    })
+    
+    return  res;
+}
+async function createRecipe(detailedRecipe){
+   
+    const {id, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree,summary,popularity}=detailedRecipe
+    let isExist=false;
+    (await getRecipeIdsFromDb()).forEach(el => {
+        if(el.id==id){
+            isExist=true
+        }
+    });
+    if(isExist){
+        return 'id exists'
+    }
+    try{
+        await dbUtils.execQuery(
+            `INSERT INTO RECIPES VALUES ('${id}', '${title}', '${readyInMinutes}', '${image}','${aggregateLikes}'
+            ,${vegan},${vegetarian},${glutenFree},'${summary}','${popularity}');`)
+        return 'OK'
+       
+    }
+    catch(e){
+        return e
+    }
+     
+ 
+}
+async function getRecipeIdsFromDb(){
+    return await dbUtils.execQuery(`SELECT id FROM RECIPES`)
+}
 
 exports.getRecipeDetails = getRecipeDetails;
 exports.getRandomQuantityRecipes = getRandomQuantityRecipes;
+exports.searchRecipe = searchRecipe;
+exports.createRecipe = createRecipe;
 
+exports.getRecipesFromDb = getRecipesFromDb;
 
 

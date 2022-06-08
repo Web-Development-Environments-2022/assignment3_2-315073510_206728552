@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 const MySql = require("../routes/utils/MySql");
 const DButils = require("../routes/utils/DButils");
-//const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt");
 
 router.post("/Register", async (req, res, next) => {
   try {
@@ -32,7 +32,7 @@ router.post("/Register", async (req, res, next) => {
     let hash_password = user_details.password
     
     await DButils.execQuery(
-      `INSERT INTO users VALUES ('${user_details.username}', '${user_details.firstname}', '${user_details.lastname}',
+      `INSERT INTO users VALUES (0,'${user_details.username}', '${user_details.firstname}', '${user_details.lastname}',
       '${user_details.country}', '${hash_password}', '${user_details.email}')`
     );
     res.status(201).send({ message: "user created", success: true });

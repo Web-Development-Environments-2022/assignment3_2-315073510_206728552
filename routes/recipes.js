@@ -43,13 +43,19 @@ router.get("/getRecipe", async (req, res, next) => { //id = 655705
  */
 router.get("/searchRecipe", async (req, res, next) => {
   try {
-    
-    let username=req.query.username
+    // Todo: username should be here?
+    // let username=req.query.username
+
     let query=req.query.query
     let numberOfResultsToDisplay=req.query.numberOfResultsToDisplay
-    let options=req.query.options
-    
+    let diet=req.query.diet
+    let cuisine=req.query.cuisine
+    let intolerances=req.query.intolerances
+    let sort=req.query.sort
 
+    let recipes=await recipes_utils.searchRecipe(query,numberOfResultsToDisplay,diet,cuisine,intolerances,sort);
+    
+    res.send(recipes)
 
   } catch (error) {
     next(error);
@@ -61,65 +67,13 @@ router.get("/searchRecipe", async (req, res, next) => {
  */ 
 router.put("/createRecipe", async (req, res, next) => { 
   try {
-    let detailedRecipeObj=req.params 
-
+    let detailedRecipeObj=req.body 
+    let status=await recipes_utils.createRecipe(detailedRecipeObj);
+    res.send(status)
   } catch (error) {
     next(error);
   }
 });
-/**
- * set recipe to "username"s favorit
- * sends status
- */
- router.post("/setRecipeFavorite", async (req, res, next) => {
-  try {
-    let recipeId=req.params.recipeId
-    let username=req.params.username
-  
 
-
-  } catch (error) {
-    next(error);
-  }
-});
-/**
- * get all favorit recipes
- * sends skinnyRecipe array
- */
- router.get("/getFavioriteRecepies", async (req, res, next) => {
-  try {
-    let username=req.query.username
-  
-
-
-  } catch (error) {
-    next(error);
-  }
-});
-/**
- * get all users recipes
- * sends skinnyRecipe array
- */
- router.get("/getMyRecepies", async (req, res, next) => {
-  try {
-    let username=req.query.username
-  
-
-  } catch (error) {
-    next(error);
-  }
-});
-/**
- * add recipes to users recipes
- * sends status
- */
- router.post("/setMyRecipies", async (req, res, next) => {
-  try {
-    let username=req.params.username
-    
-  } catch (error) {
-    next(error);
-  }
-});
 
 module.exports = router;
