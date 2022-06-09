@@ -118,7 +118,10 @@ async function searchRecipe(query,numberOfResultsToDisplay,diet,cuisine,intolera
             title:r.title,
             image:r.image,
             summary:r.summary,
-            popularity:r.aggregateLikes
+            popularity:r.aggregateLikes,
+            preparationMinutes:preparationMinutes,
+            instructions:r.analyzedInstructions,
+            
         }
     })
     
@@ -126,7 +129,7 @@ async function searchRecipe(query,numberOfResultsToDisplay,diet,cuisine,intolera
 }
 async function createRecipe(detailedRecipe){
    
-    const {uid,rid, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree,summary,popularity}=detailedRecipe
+    const {uid,rid, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree,summary,popularity,instructions}=detailedRecipe
     let isExist=false;
     (await getRecipeIdsFromDb()).forEach(el => {
         if(el.rid==rid){
@@ -139,7 +142,7 @@ async function createRecipe(detailedRecipe){
     try{
         await dbUtils.execQuery(
             `INSERT INTO RECIPES VALUES ('${uid}','${rid}', '${title}', '${readyInMinutes}', '${image}','${aggregateLikes}'
-            ,${vegan},${vegetarian},${glutenFree},'${summary}','${popularity}');`)
+            ,${vegan},${vegetarian},${glutenFree},'${summary}','${popularity}','${JSON.stringify(instructions)}');`)
         return 'OK'
        
     }

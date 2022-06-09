@@ -32,7 +32,7 @@ router.get("/searchRecipe", async (req, res, next) => {
   try {
     // Todo: username should be here?
     // let username=req.query.username
-
+    let DEFAULT_QUANTITY=5
     let query=req.query.query
     let numberOfResultsToDisplay=req.query.numberOfResultsToDisplay
     let diet=req.query.diet
@@ -41,11 +41,12 @@ router.get("/searchRecipe", async (req, res, next) => {
     let sort=req.query.sort
     let uid=req.session.user_id
     let browser=req.query.browser
-
+    let quantity=req.query.quantity
+    quantity=quantity?quantity:DEFAULT_QUANTITY
     let recipes=await recipes_utils.searchRecipe(query,numberOfResultsToDisplay,diet,cuisine,
                                             intolerances,sort,uid,browser);
     
-    res.status(200).send(recipes)
+    res.status(200).send(recipes.slice(0,quantity))
 
   } catch (error) {
     next(error);
