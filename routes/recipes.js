@@ -15,7 +15,7 @@ router.get("/test", async(req, res) =>{
 router.get("/getRecipe", async (req, res, next) => { //id = 655705
   //let recipeId=req.query.recipeId
   try {
-    const recipe = await recipes_utils.getRecipeDetails(req.query.id);
+    const recipe = await recipes_utils.getRecipeDetails(req.query.rid);
     res.send(recipe);
   } catch (error) {
     next(error);
@@ -52,10 +52,13 @@ router.get("/searchRecipe", async (req, res, next) => {
     let cuisine=req.query.cuisine
     let intolerances=req.query.intolerances
     let sort=req.query.sort
+    let uid=req.session.user_id
+    let browser=req.query.browser
 
-    let recipes=await recipes_utils.searchRecipe(query,numberOfResultsToDisplay,diet,cuisine,intolerances,sort);
+    let recipes=await recipes_utils.searchRecipe(query,numberOfResultsToDisplay,diet,cuisine,
+                                            intolerances,sort,uid,browser);
     
-    res.send(recipes)
+    res.status(200).send(recipes)
 
   } catch (error) {
     next(error);
@@ -68,6 +71,7 @@ router.get("/searchRecipe", async (req, res, next) => {
 router.put("/createRecipe", async (req, res, next) => { 
   try {
     let detailedRecipeObj=req.body 
+    detailedRecipeObj.uid=req.session.user_id
     let status=await recipes_utils.createRecipe(detailedRecipeObj);
     res.send(status)
   } catch (error) {
