@@ -102,7 +102,11 @@ async function getRandomQuantityRecipes(quantity){
     return exractPreviewRecipeDetails(new_filtered_random_recipes)
 }
 
-async function searchRecipe(query,numberOfResultsToDisplay,diet,cuisine,intolerances,sort){
+async function searchRecipe(query,numberOfResultsToDisplay,diet,cuisine,intolerances,sort,uid,browser){
+    await dbUtils.execQuery(`DELETE FROM last_searches WHERE user_id='${uid}' and browser='${browser}'`)
+    await dbUtils.execQuery(
+        `INSERT INTO last_searches VALUES ('${uid}', '${browser}', '${query}');`)
+
     const resipes = await axios.get(`${api_domain}/complexSearch`, {
         params:{
             query: query,
@@ -129,10 +133,10 @@ async function searchRecipe(query,numberOfResultsToDisplay,diet,cuisine,intolera
 }
 async function createRecipe(detailedRecipe){
    
-    const {id, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree,summary,popularity}=detailedRecipe
+    const {uid,rid, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree,summary,popularity}=detailedRecipe
     let isExist=false;
     (await getRecipeIdsFromDb()).forEach(el => {
-        if(el.id==id){
+        if(el.rid==rid){
             isExist=true
         }
     });
@@ -141,7 +145,7 @@ async function createRecipe(detailedRecipe){
     }
     try{
         await dbUtils.execQuery(
-            `INSERT INTO RECIPES VALUES ('${id}', '${title}', '${readyInMinutes}', '${image}','${aggregateLikes}'
+            `INSERT INTO RECIPES VALUES ('${uid}','${rid}', '${title}', '${readyInMinutes}', '${image}','${aggregateLikes}'
             ,${vegan},${vegetarian},${glutenFree},'${summary}','${popularity}');`)
         return 'OK'
        
@@ -153,7 +157,7 @@ async function createRecipe(detailedRecipe){
  
 }
 async function getRecipeIdsFromDb(){
-    return await dbUtils.execQuery(`SELECT id FROM RECIPES`)
+    return await dbUtils.execQuery(`SELECT rid FROM RECIPES`)
 }
 
 exports.getRecipeDetails = getRecipeDetails;

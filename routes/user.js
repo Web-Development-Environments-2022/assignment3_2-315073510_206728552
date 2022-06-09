@@ -58,69 +58,33 @@ router.get('/favorites', async (req,res,next) => {
  * sends string that is the last searched term
  */
  router.get("/getLastSearch", async (req, res, next) => {
-  let username=req.query.username
-  let browser=req.query.browser
+
   try {
+    let user_id=req.query.user_id
+    let browser=req.query.browser
     
-    
+    let result=await user_utils.getLastSearch(user_id,browser)
+    res.status(200).send(result)
     
   } catch (error) {
     next(error);
   }
 });
 
-/**
- * set recipe to "username"s favorit
- * sends status
- */
- router.post("/setRecipeFavorite", async (req, res, next) => {
-  try {
-    let recipeId=req.params.recipeId
-    let username=req.params.username
-  
 
 
-  } catch (error) {
-    next(error);
-  }
-});
-/**
- * get all favorit recipes
- * sends skinnyRecipe array
- */
- router.get("/getFavioriteRecepies", async (req, res, next) => {
-  try {
-    let username=req.query.username
-  
-
-
-  } catch (error) {
-    next(error);
-  }
-});
 /**
  * get all users recipes
  * sends skinnyRecipe array
  */
  router.get("/getMyRecepies", async (req, res, next) => {
   try {
-    let username=req.query.username
-  
+    let user_id=req.session.user_id
+    let result= await user_utils.getMyRecepies(user_id)
+    res.status(200).send(result)
+  } catch (error) {
+    next(error);
+  }
+});
 
-  } catch (error) {
-    next(error);
-  }
-});
-/**
- * add recipes to users recipes
- * sends status
- */
- router.post("/setMyRecipies", async (req, res, next) => {
-  try {
-    let username=req.params.username
-    
-  } catch (error) {
-    next(error);
-  }
-});
 module.exports = router;
