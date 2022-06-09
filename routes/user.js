@@ -86,5 +86,35 @@ router.get('/favorites', async (req,res,next) => {
     next(error);
   }
 });
+/**
+ * activated when user watched a recipe
+ * sends wathed recipes
+ */
+ router.post("/watch", async (req, res, next) => {
+  try {
+    let uid=req.session.user_id
+    let rid=req.body.rid
+    let result= await user_utils.setWatch(uid,rid)
+    res.status(200).send('OK')
+  } catch (error) {
+    next(error);
+  }
+});
+/**
+ * activated when user watched a recipe
+ * sends wathed recipes
+ */
+ router.get("/watch", async (req, res, next) => {
+  try {
+    let uid=req.session.user_id
+    let quantity=req.query.quantity
+    quantity=quantity?quantity:Number.POSITIVE_INFINITY
+    let recipe_ids= (await user_utils.getWatch(uid)).slice(0,quantity)
+    let result=await recipe_utils.getSkinnyRecipes(recipe_ids)
+    res.status(200).send(result)
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;

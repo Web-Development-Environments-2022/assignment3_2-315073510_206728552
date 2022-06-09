@@ -18,39 +18,6 @@ async function getRecipeInformation(recipe_id) {
         }
     });
 }
-
-
-
-async function getRecipeDetails(recipe_id) {
-    let recipe_info = await getRecipeInformation(recipe_id);
-    let { id, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree } = recipe_info.data;
-
-    return {
-        id: id,
-        title: title,
-        readyInMinutes: readyInMinutes,
-        image: image,
-        popularity: aggregateLikes,
-        vegan: vegan,
-        vegetarian: vegetarian,
-        glutenFree: glutenFree,
-        
-    }
-}
-
-
-async function getRecipesFromDb(recipe_id_array){
-    let res=[]
-   
-    for (let i=0;i<recipe_id_array.length;i++){
-        let id=recipe_id_array[i]     
-        let resipe=await dbUtils.execQuery(`SELECT * FROM RECIPES WHERE id='${id}';`)
-        res.push(resipe)
-    }
-    return res
-
-}
-
 async function exractPreviewRecipeDetails(recipes_info){
     //return (recipes_info.length)
     return recipes_info.map((recipe_info) => {
@@ -82,26 +49,52 @@ async function exractPreviewRecipeDetails(recipes_info){
     })
 }
 
+//=============================
+async function getSkinnyRecipe(recipe_id) {
+    let recipe_info = await getRecipeInformation(recipe_id);
 
+    return await exractPreviewRecipeDetails([recipe_info.data])
+}
+async function getSkinnyRecipes(recipe_id_array) {
+    let res=[]
+    for(let i=0;i<recipe_id_array.length;i++){
+        let tmp=await getSkinnyRecipe(recipe_id_array[i])
+        res.push(tmp)
+    }
+    return res
+}
+async function getRecipeDetails(recipe_id) {
+    let recipe_info = await getRecipeInformation(recipe_id);
+    return recipe_info.data
+}
+async function getRecipesFromDb(recipe_id_array){
+    let res=[]
+   
+    for (let i=0;i<recipe_id_array.length;i++){
+        let id=recipe_id_array[i]     
+        let resipe=await dbUtils.execQuery(`SELECT * FROM RECIPES WHERE id='${id}';`)
+        res.push(resipe)
+    }
+    return res
+
+}
 async function getRandomRecipes(quantity){
     const response = await axios.get(`${api_domain}/random`, {
         params:{
-            number: 10,
+            number: quantity,
             apiKey: process.env.spooncular_apiKey
         }
     })
     return response;
 }
 async function getRandomQuantityRecipes(quantity){
-    let random_pool = await getRandomRecipes();
+    let random_pool = await getRandomRecipes(quantity);
     let filtered_random_recipes = random_pool.data.recipes.filter((random) => (random.instructions != "") && (random.image)) //TODO: figure whats missing here
-    if(filtered_random_recipes.length < 3){
+    if(filtered_random_recipes.length < quantity){
         return getRandomQuantityRecipes(quantity)
     }
-    let new_filtered_random_recipes = filtered_random_recipes.slice(0, quantity)
-    return exractPreviewRecipeDetails(new_filtered_random_recipes)
+    return exractPreviewRecipeDetails(filtered_random_recipes)
 }
-
 async function searchRecipe(query,numberOfResultsToDisplay,diet,cuisine,intolerances,sort,uid,browser){
     await dbUtils.execQuery(`DELETE FROM last_searches WHERE user_id='${uid}' and browser='${browser}'`)
     await dbUtils.execQuery(
@@ -166,5 +159,5 @@ exports.searchRecipe = searchRecipe;
 exports.createRecipe = createRecipe;
 
 exports.getRecipesFromDb = getRecipesFromDb;
-
-
+exports.getSkinnyRecipes = getSkinnyRecipes;
+exports.getSkinnyRecipe = getSkinnyRecipe;
