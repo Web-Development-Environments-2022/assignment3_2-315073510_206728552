@@ -140,9 +140,10 @@ async function createRecipe(detailedRecipe){
         return 'id exists'
     }
     try{
+        let inst=instructions?JSON.stringify(instructions):'{}'
         await dbUtils.execQuery(
             `INSERT INTO RECIPES VALUES ('${uid}','${rid}', '${title}', '${readyInMinutes}', '${image}','${aggregateLikes}'
-            ,${vegan},${vegetarian},${glutenFree},'${summary}','${popularity}','${JSON.stringify(instructions)}');`)
+            ,${vegan},${vegetarian},${glutenFree},'${summary}','${popularity}','${inst}');`)
         return 'OK'
        
     }
