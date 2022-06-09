@@ -39,19 +39,14 @@ async function getRecipeDetails(recipe_id) {
 }
 
 
-async function getRecipesFromDb(id_array){
+async function getRecipesFromDb(recipe_id_array){
     let res=[]
-    
-    for (let i=0;i>id_array.length;i++){
-        let id=id_array[i]
-        console.log(id)
+   
+    for (let i=0;i<recipe_id_array.length;i++){
+        let id=recipe_id_array[i]     
         let resipe=await dbUtils.execQuery(`SELECT * FROM RECIPES WHERE id='${id}';`)
-        console.log('!!!')
-        console.log(id)
         res.push(resipe)
     }
-    
-    // console.log(id_array)
     return res
 
 }
