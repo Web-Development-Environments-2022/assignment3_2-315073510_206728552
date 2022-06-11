@@ -96,9 +96,9 @@ async function getRandomQuantityRecipes(quantity){
     return exractPreviewRecipeDetails(filtered_random_recipes)
 }
 async function searchRecipe(query,numberOfResultsToDisplay,diet,cuisine,intolerances,sort,uid,browser){
-    await dbUtils.execQuery(`DELETE FROM last_searches WHERE user_id='${uid}' and browser='${browser}'`)
-    await dbUtils.execQuery(
-        `INSERT INTO last_searches VALUES ('${uid}', '${browser}', '${query}');`)
+    // await dbUtils.execQuery(`DELETE FROM last_searches WHERE user_id='${uid}' and browser='${browser}'`)
+    // await dbUtils.execQuery(
+    //     `INSERT INTO last_searches VALUES ('${uid}', '${browser}', '${query}');`)
 
     const resipes = await axios.get(`${api_domain}/complexSearch`, {
         params:{
@@ -119,7 +119,7 @@ async function searchRecipe(query,numberOfResultsToDisplay,diet,cuisine,intolera
             image:r.image,
             summary:r.summary,
             popularity:r.aggregateLikes,
-            preparationMinutes:preparationMinutes,
+            preparationMinutes:r.preparationMinutes,
             instructions:r.analyzedInstructions,
             
         }

@@ -32,6 +32,9 @@ router.get("/searchRecipe", async (req, res, next) => {
   try {
     // Todo: username should be here?
     // let username=req.query.username
+    if(req.session && req.session.user_id){
+        req.session.last_searched=req.query.query
+    }
     let DEFAULT_QUANTITY=5
     let query=req.query.query
     let numberOfResultsToDisplay=req.query.numberOfResultsToDisplay
