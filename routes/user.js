@@ -60,11 +60,16 @@ router.get('/favorites', async (req,res,next) => {
  router.get("/getLastSearch", async (req, res, next) => {
 
   try {
-    let user_id=req.query.user_id
-    let browser=req.query.browser
-    
-    let result=await user_utils.getLastSearch(user_id,browser)
-    res.status(200).send(result)
+    // let user_id=req.query.user_id
+    // let browser=req.query.browser
+  if(req.session && req.session.user_id){
+      res.status(200).send(  req.session.last_searched)
+  }
+  else{
+    res.status(200).send(null)
+  }
+    // let result=await user_utils.getLastSearch(user_id,browser)
+    // res.status(200).send(result)
     
   } catch (error) {
     next(error);
