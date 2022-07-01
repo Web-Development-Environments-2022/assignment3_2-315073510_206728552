@@ -45,7 +45,7 @@ router.get("/searchRecipe", async (req, res, next) => {
     let uid=req.session.user_id
     let browser=req.query.browser
     let quantity=req.query.quantity
-    quantity=quantity?quantity:DEFAULT_QUANTITY
+    // quantity=quantity?quantity:DEFAULT_QUANTITY
     let recipes=await recipes_utils.searchRecipe(query,numberOfResultsToDisplay,diet,cuisine,
                                             intolerances,sort,uid,browser);
     
@@ -75,8 +75,17 @@ router.put("/recipe", async (req, res, next) => {
  */
  router.get("/recipe", async (req, res, next) => { //id = 655705
     //let recipeId=req.query.recipeId
+    let recipe;
     try {
-      const recipe = await recipes_utils.getRecipeDetails(req.query.rid);
+      const isMyRecipe=req.query.isMyRecipe=='true'
+  
+      if(isMyRecipe){
+        recipe =( await recipes_utils.getRecipesFromDb(req.query.rid))[0];
+      }
+      else{
+        recipe = await recipes_utils.getRecipeDetails(req.query.rid);
+      }
+      
       res.send(recipe);
     } catch (error) {
       next(error);

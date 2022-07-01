@@ -15,13 +15,24 @@ async function getLastSearch(user_id,browser){
     return lasts.map(entry=>entry.last_searched)[0];
 }
 async function getMyRecepies(uid){
-    let res=await DButils.execQuery(`select * from Recipes
+    let res;
+    try{
+    res=await DButils.execQuery(`select * from Recipes
                                 where uid='${uid}' `)
+    }
+    catch (e){
+        console.log(e.message)
+    }
     return res;
 }
 async function setWatch(uid,rid){
-    let res=await DButils.execQuery(`insert into user_watched values ('${uid}','${rid}') `)
-    return res;
+    let current_rids=await getWatch(uid)
+    if(current_rids.includes(rid)) return 'already exist'
+    res=await DButils.execQuery(`insert into user_watched values ('${uid}','${rid}') `)
+    
+
+   
+    return 'OK';
 }
 async function getWatch(uid){
     let res=await DButils.execQuery(`select * from user_watched

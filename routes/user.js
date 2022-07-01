@@ -42,12 +42,13 @@ router.post('/favorites', async (req,res,next) => {
 router.get('/favorites', async (req,res,next) => {
   try{
     const user_id = req.session.user_id;
-    let favorite_recipes = {};
     const recipes_id = await user_utils.getFavoriteRecipes(user_id);
-    let recipes_id_array = [];
-    recipes_id.map((element) => recipes_id_array.push(element.recipe_id)); //extracting the recipe ids into array
-    const results = await recipe_utils.getRecipesFromDb(recipes_id_array);
-    res.status(200).send(results);
+
+    let recipes_id_array=recipes_id.map((element) => element.recipe_id); //extracting the recipe ids into array
+    const fromDb = await recipe_utils.getRecipesFromDb(recipes_id_array);
+    const fromSC = await recipe_utils.getSkinnyRecipes(recipes_id_array);
+    const result=[...fromSC,...fromDb]
+    res.status(200).send(result);
   } catch(error){
     next(error); 
   }
@@ -86,6 +87,7 @@ router.get('/favorites', async (req,res,next) => {
   try {
     let user_id=req.session.user_id
     let result= await user_utils.getMyRecepies(user_id)
+
     res.status(200).send(result)
   } catch (error) {
     next(error);
@@ -100,7 +102,7 @@ router.get('/favorites', async (req,res,next) => {
     let uid=req.session.user_id
     let rid=req.body.rid
     let result= await user_utils.setWatch(uid,rid)
-    res.status(200).send('OK')
+    res.status(200).send(result)
   } catch (error) {
     next(error);
   }
@@ -112,10 +114,15 @@ router.get('/favorites', async (req,res,next) => {
  router.get("/watch", async (req, res, next) => {
   try {
     let uid=req.session.user_id
-    let quantity=req.query.quantity
-    quantity=quantity?quantity:Number.POSITIVE_INFINITY
-    let recipe_ids= (await user_utils.getWatch(uid)).slice(0,quantity)
-    let result=await recipe_utils.getSkinnyRecipes(recipe_ids)
+    let recipe_ids= (await user_utils.getWatch(uid))
+    let q=req.query.q?req.query.q:Number.POSITIVE_INFINITY
+    q=Number.parseInt(q)
+    recipe_ids=recipe_ids.reverse().slice(0,q)
+    const fromDb=await recipe_utils.getRecipesFromDb(recipe_ids)
+    recipe_ids=recipe_ids.filter(r=>!fromDb.map(dbR=>dbR.rid).includes(r))
+    const fromSc=await recipe_utils.getSkinnyRecipes(recipe_ids)
+    
+    const result =[...fromDb,...fromSc]
     res.status(200).send(result)
   } catch (error) {
     next(error);

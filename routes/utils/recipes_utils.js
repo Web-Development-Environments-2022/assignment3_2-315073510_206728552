@@ -59,7 +59,7 @@ async function getSkinnyRecipes(recipe_id_array) {
     let res=[]
     for(let i=0;i<recipe_id_array.length;i++){
         let tmp=await getSkinnyRecipe(recipe_id_array[i])
-        res.push(tmp)
+        res=[...res,...tmp]
     }
     return res
 }
@@ -72,8 +72,8 @@ async function getRecipesFromDb(recipe_id_array){
    
     for (let i=0;i<recipe_id_array.length;i++){
         let id=recipe_id_array[i]     
-        let resipe=await dbUtils.execQuery(`SELECT * FROM RECIPES WHERE id='${id}';`)
-        res.push(resipe)
+        let recipe=await dbUtils.execQuery(`SELECT * FROM RECIPES WHERE rid='${id}';`)
+        res=[...res,...recipe]
     }
     return res
 
@@ -105,7 +105,7 @@ async function searchRecipe(query,numberOfResultsToDisplay,diet,cuisine,intolera
             query: query,
             number:numberOfResultsToDisplay,
             diet:diet,
-            excludeCuisine:cuisine,
+            cuisine:cuisine,
             intolerances:intolerances,
             addRecipeInformation:true,
             sort:sort,
@@ -128,22 +128,18 @@ async function searchRecipe(query,numberOfResultsToDisplay,diet,cuisine,intolera
     return  res;
 }
 async function createRecipe(detailedRecipe){
-   
-    const {uid,rid, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree,summary,popularity,instructions}=detailedRecipe
-    let isExist=false;
-    (await getRecipeIdsFromDb()).forEach(el => {
-        if(el.rid==rid){
-            isExist=true
-        }
-    });
-    if(isExist){
-        return 'id exists'
-    }
+    Array.prototype.max = function() {
+        return Math.max.apply(null, this);
+      };
+    const all_ids=(await getRecipeIdsFromDb()).map(r=>Number.parseInt(r.rid))
+    const rid=all_ids.max()+1
+    const {uid, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree,summary,popularity,instructions,ingredients}=detailedRecipe
     try{
         let inst=instructions?JSON.stringify(instructions):'{}'
+        let ing=instructions?JSON.stringify(ingredients):'{}'
         await dbUtils.execQuery(
             `INSERT INTO RECIPES VALUES ('${uid}','${rid}', '${title}', '${readyInMinutes}', '${image}','${aggregateLikes}'
-            ,${vegan},${vegetarian},${glutenFree},'${summary}','${popularity}','${inst}');`)
+            ,${vegan},${vegetarian},${glutenFree},'${summary}','${popularity}','${inst}','${ing}');`)
         return 'OK'
        
     }

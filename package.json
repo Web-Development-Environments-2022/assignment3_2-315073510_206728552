@@ -1,7 +1,7 @@
 {
   "name": "assignment-3.2",
   "version": "1.0.0",
-  "description": "",
+  "description": "[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-c66648af7eb3fe8bc4f294546bfd86ef473780cde1dea487d3c4ff354943c9ae.svg)](https://classroom.github.com/online_ide?assignment_repo_id=7965729&assignment_repo_type=AssignmentRepo)",
   "main": "main.js",
   "scripts": {
     "start": "node main.js"
@@ -16,17 +16,24 @@
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "crypto-js": "^4.0.0",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.6.0",
     "express": "^4.18.1",
     "express-validator": "^6.4.1",
     "morgan": "^1.10.0",
     "mssql": "^6.2.0",
     "mysql2": "^2.3.3",
-    "node": "^17.7.2",
+    "nodemon": "^2.0.4",
     "pg": "^8.2.1"
   },
   "devDependencies": {
-    "mysql": "^2.18.1",
-    "nodemon": "^2.0.16"
-  }
+    "mysql": "^2.18.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Web-Development-Environments-2022/assignment3_2-205865835_209469717.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Web-Development-Environments-2022/assignment3_2-205865835_209469717/issues"
+  },
+  "homepage": "https://github.com/Web-Development-Environments-2022/assignment3_2-205865835_209469717#readme"
 }

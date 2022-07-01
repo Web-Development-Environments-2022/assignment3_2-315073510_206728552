@@ -6,7 +6,6 @@ var logger = require("morgan");
 const session = require("client-sessions");
 const DButils = require("./routes/utils/DButils");
 var cors = require('cors')
-
 var app = express();
 app.use(logger("dev")); //logger
 app.use(express.json()); // parse application/json
@@ -38,8 +37,8 @@ app.get("/",function(req,res)
 
 });
 
-app.use(cors());
-app.options("*", cors());
+// app.use(cors());
+// app.options("*", cors());
 
 const corsConfig = {
   origin: true,
@@ -54,6 +53,7 @@ var port = process.env.PORT || "80"; //local=3000 remote=80
 const user = require("./routes/user");
 const recipes = require("./routes/recipes");
 const auth = require("./routes/auth");
+
 
 
 //#region cookie middleware
@@ -76,10 +76,11 @@ app.use(function (req, res, next) {
 // ----> For cheking that our server is alive
 app.get("/alive", (req, res) => res.send("I'm alive"));
 
-// // Routings
+// Routings
 app.use("/users", user);
 app.use("/recipes", recipes);
 app.use(auth);
+
 
 // Default router
 app.use(function (err, req, res, next) {
@@ -99,4 +100,3 @@ process.on("SIGINT", function () {
   }
   process.exit();
 });
-
