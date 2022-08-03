@@ -11,12 +11,16 @@ const api_domain = "https://api.spoonacular.com/recipes";
 
 
 async function getRecipeInformation(recipe_id) {
-    return await axios.get(`${api_domain}/${recipe_id}/information`, {
-        params: {
-            includeNutrition: false,
-            apiKey: process.env.spooncular_apiKey
-        }
-    });
+
+        return await axios.get(`${api_domain}/${recipe_id}/information`, {
+            params: {
+                includeNutrition: false,
+                apiKey: process.env.spooncular_apiKey
+            }
+        });
+    
+    
+    
 }
 async function exractPreviewRecipeDetails(recipes_info){
     //return (recipes_info.length)
@@ -51,9 +55,16 @@ async function exractPreviewRecipeDetails(recipes_info){
 
 //=============================
 async function getSkinnyRecipe(recipe_id) {
+    try{
     let recipe_info = await getRecipeInformation(recipe_id);
-
     return await exractPreviewRecipeDetails([recipe_info.data])
+    }
+
+    catch (e){
+        console.log(`failed getting recipe ${recipe_id} from spooncular`)
+        console.log(e.message)
+        
+    }
 }
 async function getSkinnyRecipes(recipe_id_array) {
     let res=[]

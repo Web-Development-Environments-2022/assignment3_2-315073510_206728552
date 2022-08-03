@@ -16,6 +16,7 @@ router.use(async function (req, res, next) {
       }
     }).catch(err => next(err));
   } else {
+    
     res.sendStatus(401);
   }
 });
@@ -117,9 +118,10 @@ router.get('/favorites', async (req,res,next) => {
     let recipe_ids= (await user_utils.getWatch(uid))
     let q=req.query.q?req.query.q:Number.POSITIVE_INFINITY
     q=Number.parseInt(q)
-    recipe_ids=recipe_ids.reverse().slice(0,q)
+    recipe_ids=recipe_ids.slice(0,q)
     const fromDb=await recipe_utils.getRecipesFromDb(recipe_ids)
     recipe_ids=recipe_ids.filter(r=>!fromDb.map(dbR=>dbR.rid).includes(r))
+    
     const fromSc=await recipe_utils.getSkinnyRecipes(recipe_ids)
     
     const result =[...fromDb,...fromSc]
