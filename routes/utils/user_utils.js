@@ -27,16 +27,18 @@ async function getMyRecepies(uid){
 }
 async function setWatch(uid,rid){
     let current_rids=await getWatch(uid)
-    if(current_rids.includes(rid)) return 'already exist'
-    res=await DButils.execQuery(`insert into user_watched values ('${uid}','${rid}') `)
-    
-
-   
+    if(current_rids.includes(rid)){
+        await DButils.execQuery(`delete from user_watched where uid='${uid}' and rid='${rid}'`)
+    } 
+    res=await DButils.execQuery(`insert into user_watched values ('${uid}','${rid}','${Date.now()}') `)
+    console.log(await DButils.execQuery(`select * from user_watched
+    where uid='${uid}' `))
     return 'OK';
 }
 async function getWatch(uid){
     let res=await DButils.execQuery(`select * from user_watched
                                     where uid='${uid}' `)
+    res=res.sort((a,b)=>{ return (+(a.date))-(+(b.date));}).reverse()
     return res.map(o=>o.rid);
 }
 exports.markAsFavorite = markAsFavorite;
