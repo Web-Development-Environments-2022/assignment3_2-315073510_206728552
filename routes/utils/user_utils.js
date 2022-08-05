@@ -1,7 +1,13 @@
 const DButils = require("./DButils");
 
-async function markAsFavorite(user_id, recipe_id){
-    await DButils.execQuery(`insert into FavoriteRecipes values ('${user_id}','${recipe_id}')`);
+async function setFavorite(user_id, recipe_id,markAs){
+    if(markAs){
+        await DButils.execQuery(`insert into FavoriteRecipes values ('${user_id}','${recipe_id}')`);
+    }
+    else{
+        await DButils.execQuery(`delete from FavoriteRecipes where user_id='${user_id}' AND recipe_id='${recipe_id}'`);
+    }
+    
 }
 
 async function getFavoriteRecipes(user_id){
@@ -41,7 +47,7 @@ async function getWatch(uid){
     res=res.sort((a,b)=>{ return (+(a.date))-(+(b.date));}).reverse()
     return res.map(o=>o.rid);
 }
-exports.markAsFavorite = markAsFavorite;
+exports.setFavorite = setFavorite;
 exports.getFavoriteRecipes = getFavoriteRecipes;
 exports.getLastSearch=getLastSearch
 exports.getMyRecepies=getMyRecepies
