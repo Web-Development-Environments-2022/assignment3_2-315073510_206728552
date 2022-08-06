@@ -37,8 +37,6 @@ async function setWatch(uid,rid){
         await DButils.execQuery(`delete from user_watched where uid='${uid}' and rid='${rid}'`)
     } 
     res=await DButils.execQuery(`insert into user_watched values ('${uid}','${rid}','${Date.now()}') `)
-    console.log(await DButils.execQuery(`select * from user_watched
-    where uid='${uid}' `))
     return 'OK';
 }
 async function getWatch(uid){
