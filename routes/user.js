@@ -117,8 +117,14 @@ router.get('/favorites', async (req,res,next) => {
   try {
     let uid=req.session.user_id
     let recipe_ids= (await user_utils.getWatch(uid))
-    let q=req.query.q?req.query.q:Number.POSITIVE_INFINITY
-    q=Number.parseInt(q)
+    let q=-1
+    if(req.query.q=='undefined' || req.query.q==undefined){
+      q=Number.POSITIVE_INFINITY
+    }else{
+      q=Number.parseInt(req.query.q)
+    }
+  
+ 
     recipe_ids=recipe_ids.slice(0,q)
     const fromDb=await recipe_utils.getRecipesFromDb(recipe_ids)
     recipe_ids=recipe_ids.filter(r=>!fromDb.map(dbR=>dbR.rid).includes(r))

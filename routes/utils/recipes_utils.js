@@ -143,7 +143,14 @@ async function createRecipe(detailedRecipe){
         return Math.max.apply(null, this);
       };
     const all_ids=(await getRecipeIdsFromDb()).map(r=>Number.parseInt(r.rid))
-    const rid=all_ids.max()+1
+    let rid=-1
+    if(all_ids.length==0){
+         rid=0
+    }
+    else{
+        rid=all_ids.max()+1
+    }
+   
     const {uid, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree,summary,popularity,instructions,ingredients}=detailedRecipe
     try{
         let inst=instructions?JSON.stringify(instructions):'{}'
@@ -155,6 +162,7 @@ async function createRecipe(detailedRecipe){
        
     }
     catch(e){
+        console.log(e)
         return e
     }
      
